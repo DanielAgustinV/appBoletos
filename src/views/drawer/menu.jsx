@@ -52,11 +52,11 @@ const options = [
 
   return (
     <View style={styles.container}>
-      <FlatList
+      {/* <FlatList
         data={menuItems}
         renderItem={renderItem}
         keyExtractor={(item) => item.route}
-      />
+      /> */}
       <TouchableOpacity style={styles.logoutButton} onPress={Alerta}>
         <Text style={styles.logoutText}>Cerrar sesión</Text>
       </TouchableOpacity>

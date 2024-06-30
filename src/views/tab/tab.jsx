@@ -9,8 +9,10 @@ import { Icon } from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import QRCodeScanner from '../scanner/QrScanner';
 import Qr from '../scanner/Qr'
-import Boletos from '../scanner/boletos';
+// import Boletos from '../scanner/boletos';
 import btn from '../btn'
+import WelcomeScreen from '../home/Welcome'
+import Boletos from '../scanner/boletos'
 
 
 
@@ -25,25 +27,25 @@ function MyTabs() {
 
           if (route.name === 'Mas') {
             iconName = focused ? 'menu-open' : 'menu';
-          } else if (route.name === 'Eventos') {
+          } else if (route.name === 'Inicio') {
             iconName = focused ? 'home' : 'home';
           } else if (route.name === 'QR Scanner') {
             iconName = focused ? 'qr-code-scanner' : 'qr-code-scanner';
-          } else if (route.name === 'QR'){
-            iconName = focused ? 'qr-code-scanner' : 'cloud-download';
+          } else if (route.name === 'Boletos'){
+            iconName = focused ? 'download' : 'cloud-download';
           }
 
           // Retorna el icono correspondiente
           return <Icon name={iconName} size={size} color={color} />;
           // return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: 'rgba(255, 193, 7, 1)',
+        tabBarActiveTintColor: '#0303b5',
         tabBarInactiveTintColor: 'black',
       })}
     >
-      <Tab.Screen name="Eventos" component={ConcertList} />
+      <Tab.Screen name="Inicio" component={WelcomeScreen} />
       <Tab.Screen name="QR Scanner" component={Qr} />
-      <Tab.Screen name="QR" component={btn} />
+      <Tab.Screen name="Boletos" component={Boletos} />
       <Tab.Screen name="Mas" component={Menu} />
     </Tab.Navigator>
   );

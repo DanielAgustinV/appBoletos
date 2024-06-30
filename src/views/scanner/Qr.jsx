@@ -1,90 +1,4 @@
-// import React, { useState } from 'react';
-// import { View, Text ,Alert} from 'react-native';
-// import { Button, Dialog } from '@rneui/themed';
-// import styles from '../../styles/styles';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
-// import { RNCamera } from 'react-native-camera';
-// import axios from 'react-native-axios';
-// import {obtener} from '../../helper/storage';
-
-
-// function QRscanner() {
-//     const [qrValue, setQrValue] = useState('');
-//     const [light, setLight] = useState(false);
-//     const [showDialog, setShowDialog] = useState(false);
-
-//     const handleScan = (e) => {
-//         const decodedValue = atob(e.data); // Decodificar base64
-//         setQrValue(decodedValue);
-//         setShowDialog(true);
-//         sendData(decodedValue); // Enviar datos al servicio
-//     };
-
-//     const sendData = async (data) => {
-//         token = obtener('token')
-//         console.log('URL');
-//         console.log(data);
-//         try {
-//             const response = await axios.put(`${data}`, {
-//               id_usuario: '1',
-//               token: token,
-//             });
-      
-//             if (response.status === 200) {
-//               Alert.alert('Éxito', 'Usuario actualizado correctamente');
-//             } else {
-//               Alert.alert('Error', 'No se pudo actualizar el usuario');
-//             }
-//           } catch (error) {
-//             Alert.alert('Error', 'Ocurrió un error al actualizar el usuario');
-//             console.error(error);
-//           } finally {
-//             // setLoading(false);
-//           }
-//     };
-
-//     return (
-//         <View style={styles.container}>
-//             <QRCodeScanner
-//                 ref={(node) => { this.scanner = node }}
-//                 onRead={handleScan}
-//                 flashMode={light ? RNCamera.Constants.FlashMode.torch : RNCamera.Constants.FlashMode.auto}
-//                 topContent={<></>}
-//                 bottomContent={
-//                     <Button
-//                         title={`Flash ${light ? 'OFF' : 'ON'}`}
-//                         icon={{ ...styles.iconButtonHome, size: 20, name: 'qr-code-scanner' }}
-//                         iconContainerStyle={styles.iconButtonHomeContainer}
-//                         titleStyle={{ ...styles.titleButtonHome, fontSize: 20 }}
-//                         buttonStyle={{ ...styles.buttonHome, height: 50 }}
-//                         containerStyle={{ ...styles.buttonHomeContainer, marginTop: 20, marginBottom: 10 }}
-//                         onPress={() => { setLight(!light) }}
-//                     />
-//                 }
-//             />
-//             <View style={styles.overlay}>
-//           <Text style={styles.scanText}>Escanee el código QR</Text>
-//         </View>
-//             {/* <Dialog
-//                 isVisible={showDialog}
-//                 onBackdropPress={() => setShowDialog(!showDialog)}>
-//                 <Dialog.Title titleStyle={{ color: '#000', fontSize: 25 }} title="Scanned QR:" />
-//                 <Text style={{ color: '#000', fontSize: 25 }}>
-//                     {qrValue}
-//                 </Text>
-//                 <Dialog.Actions>
-//                     <Dialog.Button title="Scan Again" onPress={() => {
-//                         this.scanner.reactivate();
-//                         setShowDialog(false);
-//                     }} />
-//                 </Dialog.Actions>
-//             </Dialog> */}
-//         </View>
-//     );
-// }
-
-// export default QRscanner;
-import React, { useState } from 'react';
+import React, { useState ,useRef} from 'react';
 import { View, Text, Alert } from 'react-native';
 import { Button } from '@rneui/themed';
 import styles from '../../styles/styles';
@@ -92,11 +6,25 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import axios from 'react-native-axios';
 import { obtener } from '../../helper/storage';
+import CustomAlert from '../ui/alerts';
 
 function QRscanner() {
     const [qrValue, setQrValue] = useState('');
     const [light, setLight] = useState(false);
     const [showDialog, setShowDialog] = useState(false);
+    const scannerRef = useRef();
+    const [alertVisible, setAlertVisible] = useState(true);
+    const [responsemensaje, setResponsemensaje] = useState(null);
+    const [responsesuccess, setResponsesuccess] = useState(true);
+    const [icon, setIcon] = useState(true);
+
+    const closeAlert = () => {
+      scannerRef.current.reactivate();
+      setAlertVisible(false);         
+    };
+    const options = [
+      { text: 'Aceptar', onPress: closeAlert },
+    ];
 
     const isBase64 = (str) => {
         const base64Regex = /^(?:[A-Z0-9+\/]{4})*(?:[A-Z0-9+\/]{2}==|[A-Z0-9+\/]{3}=)?$/i;
@@ -108,77 +36,102 @@ function QRscanner() {
         if (isBase64(scannedData)) {
             const decodedValue = atob(scannedData); // Decodificar base64
             setQrValue(decodedValue);
-            sendData(decodedValue); // Enviar datos al servicio
+            enviaQr(decodedValue); // Enviar datos al servicio
         } else {
             Alert.alert('Error', 'El código QR no es válido.');
         }
     };
+    const enviaQr = async (url) => {
 
-    // const sendData = async (data) => {
-    //     const config = {
-    //         headers: {
-    //           'Authorization': `Bearer ${token}`,
-    //           'Content-Type': 'application/json'
-    //         }
-    //       };
-    //     const token = obtener('token');
-    //     console.log('URL');
-    //     console.log(data);
-    //     try {
-    //         const response = await axios.put(`${data}`, {
-    //             token: token,
-    //         });
-
-    //         if (response.status === 200) {
-    //             Alert.alert('Éxito', 'Usuario actualizado correctamente');
-    //         } else {
-    //             Alert.alert('Error', 'No se pudo actualizar el usuario');
-    //         }
-    //     } catch (error) {
-    //         Alert.alert('Error', 'Ocurrió un error al actualizar el usuario');
-    //         console.error(error);
-    //     }
-    // };
-
-    const sendData = async (data) => {
-        const token = obtener('token'); // Obtener el token antes
-        console.log(token);
-        console.log(data);
-
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        };
-        console.log(data);
+      let nuevaUrl = url.replace('https://', 'http://');
+      console.log(nuevaUrl);
         try {
-            const response = await axios.get(' https://www.fasticket.mx/api/escanea_boleto/108', config); 
-    
-            console.log(response,data);
+          const token = await obtener('token');
+          if (!token) {
+            Alert.alert('Error', 'No se pudo obtener el token');
             return;
-            if (response.status === 200) {
-                Alert.alert('Éxito', 'Valido');
-            } else {
-                Alert.alert('Error', 'No Valido');
-            }
+          }
+          // console.log(token);
+    
+          // console.log('Token:', token);
+    
+          const config = {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            // body: JSON.stringify({ /* Aquí puedes agregar el cuerpo de la solicitud si es necesario */ })
+          };
+          console.log('URL QUE SRECIVO '+ ' ' + `${nuevaUrl}`);
+        //   https://www.fasticket.mx/api/escanea_boleto/10
+    
+          // const x = 'http://www.fasticket.mx/api/escanea_boleto/108';
+          // console.log('Configuración de la solicitud:', config);
+    
+          // console.log('URL QUE JALA'+x);
+          // const response = await fetch('htts://www.fasticket.mx/api/escanea_boleto/108', config); // Cambiado a HTTP
+          const response = await fetch(`${nuevaUrl}`, config); // Cambiado a HTTP
+          // console.log('Estado de la respuesta:', response.status);
+    
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          // console.log('Response:', data.success);
+          // console.log(data.mensaje);
+          if (response.status === 200) {
+            // console.log('ENTROOO');
+      // scannerRef.current.reactivate();
+
+            setResponsemensaje(data.mensaje);
+            setResponsesuccess(false)
+            setIcon(data.success);
+
+            // setAlertVisible(true);
+
+            // Alert.alert('Éxito', data.mensaje, [
+            //     { text: 'OK', onPress: () => scannerRef.current.reactivate() }
+            //   ]);
+          } else {
+
+            setResponsemensaje(data.mensaje);
+            setResponsesuccess(data.success);
+            setIcon(data.success);
+
+            // setAlertVisible(true);
+
+            // Alert.alert('Error', data.mensaje, [
+            //     { text: 'OK', onPress: () => scannerRef.current.reactivate() }
+            //   ]);
+          }
+          setAlertVisible(true);
+
         } catch (error) {
-            // if (error.response && error.response.status === 401) {
-            //     Alert.alert('Error de autenticación', 'Su sesión ha expirado o no está autorizado para realizar esta acción. Por favor, vuelva a iniciar sesión.');
-            //   } else {
-            //     Alert.alert('Error', 'Ocurrió un error al procesar la solicitud');
-            //     console.error('Error:', error);
-            //   }
-            // Alert.alert('Error', 'Ocurrió un error');
-            console.error(error);
+          console.error('Error:', error.message);
+          if (error.message.includes('Network request failed')) {
+            setResponsemensaje('Error de red', 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.');
+            setResponsesuccess(false)
+            setAlertVisible(true);
+            scannerRef.current.reactivate();
+
+            // Alert.alert('Error de red', 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.');
+          } else if (error.response && error.response.status === 401) {
+            Alert.alert('Error de autenticación', 'Su sesión ha expirado o no está autorizado para realizar esta acción. Por favor, vuelva a iniciar sesión.');
+          } else {
+            Alert.alert('Error', 'Ocurrió un error al procesar la solicitud');
+            console.error('Error respuesta servicio:', error);
+          }
         }
-    };
+      };
+      
     
 
     return (
         <View style={styles.container}>
             <QRCodeScanner
-                ref={(node) => { this.scanner = node }}
+                ref={scannerRef}
                 onRead={handleScan}
                 flashMode={light ? RNCamera.Constants.FlashMode.torch : RNCamera.Constants.FlashMode.auto}
                 topContent={<></>}
@@ -197,20 +150,18 @@ function QRscanner() {
             <View style={styles.overlay}>
                 <Text style={styles.scanText}>Escanee el código QR</Text>
             </View>
-            {/* <Dialog
-                isVisible={showDialog}
-                onBackdropPress={() => setShowDialog(!showDialog)}>
-                <Dialog.Title titleStyle={{ color: '#000', fontSize: 25 }} title="Scanned QR:" />
-                <Text style={{ color: '#000', fontSize: 25 }}>
-                    {qrValue}
-                </Text>
-                <Dialog.Actions>
-                    <Dialog.Button title="Scan Again" onPress={() => {
-                        this.scanner.reactivate();
-                        setShowDialog(false);
-                    }} />
-                </Dialog.Actions>
-            </Dialog> */}
+            <View>
+              {!responsesuccess && (
+                <CustomAlert
+                  visible={alertVisible}
+                  icon={icon ?'check' : 'error' }
+                  title={icon ? 'Éxito' : 'Error..'}
+                  message={responsemensaje}
+                  options={options}
+                  onClose={closeAlert}
+                />
+              )}
+          </View>
         </View>
     );
 }

@@ -15,7 +15,7 @@ const CustomAlert = ({ visible, icon, title, message, options, onClose }) => {
       <View style={styles.container}>
         <View style={styles.alertContainer}>
           {/* Icon (optional) */}
-          {icon && <Icon name={icon} size={70} color={icon === 'check' ? 'green' : icon === 'closecircleo' ? 'red' : 'orange'} />}
+          {icon && <Icon name={icon} size={70} color={icon === 'check' ? 'green' : icon === 'error' ? 'red' : 'orange'} />}
 
           {/* Title */}
           <Text style={styles.title}>{title}</Text>
@@ -62,6 +62,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: 'black'
+
   },
   message: {
     fontSize: 18,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Button, Alert } from 'react-native';
 import { obtener } from '../helper/storage';
+import { longPressGestureHandlerProps } from 'react-native-gesture-handler/lib/typescript/handlers/LongPressGestureHandler';
 
 const MyButtonComponent = () => {
 
@@ -34,12 +35,12 @@ const MyButtonComponent = () => {
       }
       
       const data = await response.json();
-      console.log('Response:', data);
-
+      console.log('Response:', data.success);
+      console.log(data.mensaje);
       if (response.status === 200) {
-        Alert.alert('Éxito', 'Valido');
+        Alert.alert('Éxito',data.mensaje);
       } else {
-        Alert.alert('Error', 'No Valido');
+        Alert.alert('Error',data.mensaje);
       }
     } catch (error) {
       console.error('Error:', error.message);
@@ -49,10 +50,13 @@ const MyButtonComponent = () => {
         Alert.alert('Error de autenticación', 'Su sesión ha expirado o no está autorizado para realizar esta acción. Por favor, vuelva a iniciar sesión.');
       } else {
         Alert.alert('Error', 'Ocurrió un error al procesar la solicitud');
-        console.error('Error:', error);
+        console.error('Error respuesta servicio:', error);
+        console.log(response.data);
+        console.log('pedro');
       }
     }
   };
+  
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
