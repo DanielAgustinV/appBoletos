@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     iconButtonHomeContainer: { marginRight: 10 },
     iconButtonHome: {
         type: 'material',
-        size: 50,
+        size: 40,
         color: 'white',
     },
     titleButtonHome: { 
@@ -19,16 +19,28 @@ const styles = StyleSheet.create({
     },
     buttonHome: {
         backgroundColor: 'rgba(255, 193, 7, 1)',
+        // backgroundColor: 'rgba(255, 103, 7, 1)',
         borderColor: 'transparent',
         borderWidth: 0,
         borderRadius: 30,
         height: 100,
     },
     buttonHomeContainer: {
-        width: 200,
+        width: 300,
         marginHorizontal: 50,
         marginVertical: 20,
     },
+    overlay: {
+        position: 'absolute',
+        top: '50%',
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+      },
+      scanText: {
+        fontSize: 18,
+        color: '#fff',
+      },
 });
 
 export default styles;

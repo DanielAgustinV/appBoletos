@@ -1,37 +1,13 @@
 import React, {useState} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import {guardar} from '../../helper/storage';
+import CustomAlert from '../ui/alerts';
 
 
-const MenuItem = ({ icon, label, route }) => {
-  const [alertVisible, setAlertVisible] = useState(false);
-
-  const Alerta = () => {
-    setAlertVisible(true);
-};
-
+const Sidebar = () => {
   const navigation = useNavigation();
-
-  const handlePress = () => {
-    if(route == 'salir'){
-      console.log('cerrar secion');
-      Alerta();
-      // return
-    }else{
-      navigation.navigate(route);
-    }
-  };
-
-  return (
-    <TouchableOpacity style={styles.menuItem} onPress={handlePress}>
-      {/* Puedes usar un icono aquí si lo deseas */}
-      <Text style={styles.icon}>{icon}</Text>
-      <Text style={styles.label}>{label}</Text>
-    </TouchableOpacity>
-  );
-};
-
-const CustomDrawerMenu = () => {
   const [alertVisible, setAlertVisible] = useState(false);
 
   const Alerta = () => {
@@ -43,7 +19,9 @@ const handleCloseAlert = () => {
 };
 
 const CerrarSesion = () => {
-  logout('Login');
+  // logout('Login');
+  // obtener('token')
+  guardar('token','')
   navigation.replace('Login');
   setAlertVisible(false);
 
@@ -52,42 +30,79 @@ const options = [
   { text: 'Aceptar', onPress: CerrarSesion },
   { text: 'Cancelar', onPress: handleCloseAlert },
 ];
+
+
+  // Definición del array de elementos del menú
+  const menuItems = [
+    { name: 'Perfil', route: 'Home', icon: 'person-outline' },
+    { name: 'Notificaciones', route: 'i', icon: 'notifications-none' },
+    { name: 'Ajustes', route: 'o', icon: 'notifications-none' },
+    // Agrega más elementos según sea necesario
+  ];
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.menuItem}
+      onPress={() => navigation.navigate(item.route)}
+    >
+      <Icon name={item.icon} size={24} color="#000" />
+      <Text style={styles.menuText}>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
-      <MenuItem icon="" label="Perfil" route="Perfil" />
-      <MenuItem icon="🏠" label="Inicio" route="Home" />
-      <MenuItem icon="📁" label="Archivos" route="Files" />
-      <MenuItem icon="📝" label="Notas" route="Notes" />
-      {/* Agrega más elementos MenuItem según tus necesidades */}
-
+      <FlatList
+        data={menuItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.route}
+      />
+      <TouchableOpacity style={styles.logoutButton} onPress={Alerta}>
+        <Text style={styles.logoutText}>Cerrar sesión</Text>
+      </TouchableOpacity>
+      <View>
+        {alertVisible && (
+            <CustomAlert
+          visible={alertVisible}
+          icon={'warning'}
+          title={alertVisible ? 'Atención' : 'Error..'}
+          message={'Seguro que quieres cerrar sesion'}
+          options={options}
+          onClose={handleCloseAlert}
+        />
+          )}
+      </View>
     </View>
-    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    padding: 20,
+    backgroundColor: '#f8f9fa',
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingVertical: 15,
+  },
+  menuText: {
+    marginLeft: 20,
+    fontSize: 20,
+    color: 'black'
+  },
+  logoutButton: {
+    marginTop: 'auto',
+    paddingVertical: 15,
+    alignItems: 'center',
+    backgroundColor: '#ff4d4d',
     borderRadius: 5,
-    backgroundColor: '#f0f0f0',
   },
-  icon: {
-    fontSize: 24,
-    marginRight: 10,
-  },
-  label: {
-    fontSize: 18,
+  logoutText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
-export default CustomDrawerMenu;
+export default Sidebar;

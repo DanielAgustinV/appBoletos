@@ -19,7 +19,7 @@ const handleCloseAlert = () => {
 
 const CerrarSesion = () => {
   // logout('Login');
-  obtener('token')
+  // obtener('token')
   navigation.replace('Login');
   setAlertVisible(false);
 

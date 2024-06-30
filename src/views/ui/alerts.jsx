@@ -1,6 +1,8 @@
 import React from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
+// import Icon from 'react-native-vector-icons/AntDesign';
+import { Icon } from 'react-native-elements';
+
 
 const CustomAlert = ({ visible, icon, title, message, options, onClose }) => {
   return (
@@ -65,6 +67,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 20,
+    color: 'black'
   },
   buttonContainer: {
     flexDirection: 'row',

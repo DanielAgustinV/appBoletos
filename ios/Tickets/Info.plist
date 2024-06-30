@@ -52,12 +52,19 @@
 	<true/>
 	   <key>CFBundleName</key>
     <string>$(PRODUCT_NAME)</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Se necesita acceso a la cámara para escanear códigos QR.</string>
+	<key>NSCameraUsageDescription</key>
+    <string>Permiso necesario para acceder a la cámara.</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>MaterialIcons.ttf</string>
+		<string>Ionicons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+	</array>
+
 </dict>
 </plist>

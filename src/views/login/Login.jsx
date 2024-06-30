@@ -45,14 +45,14 @@ const LoginScreen = ({navigation}) => {
       // console.log('check' +isChecked);
       const datos = {
           usuario : "escaner@fasticket.mx",
-          password :"Fa5tick3t.mx"
+          password :"Fa5tick3t.mx",
       };
       console.log(datos);
             try {
-        const data = await ApiRequest( datos, endpoints.login);
-        const token = data.token;
-        console.log(token);
-        navigation.replace('Home');
+        const data = await ApiRequest( datos, endpoints.login,'POST');
+        // const token = data.token;
+        // console.log(token);
+        // navigation.replace('Home');
                 if(data.success == true){
         // setResponseData(data);
 
@@ -82,7 +82,7 @@ const LoginScreen = ({navigation}) => {
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <Image source={require('../../assets/final.jpeg')} style={styles.logo} />
+          <Image source={require('../../assets/final1.jpeg')} style={styles.logo} />
         </View>
         {/* <Text style={styles.title}>Iniciar Sesión d</Text> */}
         <View style={styles.form}>
@@ -123,7 +123,7 @@ const LoginScreen = ({navigation}) => {
           {!responsesuccess && (
             <CustomAlert
               visible={alertVisible}
-              icon={responsesuccess ? 'check' :  'closecircleo'  }
+              icon={'cancel'  }
               title={responsesuccess ? 'Éxito' : 'Error..'}
               message={responsemensaje}
               options={options}
@@ -171,7 +171,8 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     // backgroundColor: '#f5d033',
-    backgroundColor: '#e0e155',
+    backgroundColor: 'rgba(255, 193, 7, 1)',
+    // color: 'rgba(255, 193, 7, 1)',
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
