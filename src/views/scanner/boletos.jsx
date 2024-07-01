@@ -8,8 +8,8 @@ const SyncAndScanComponent = ({ navigation }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isSynced, setIsSynced] = useState(false);
 
-  const eventos = ['Natanael Cano', 'Chalino Sanchez', 'Valentin Elizalde'];
-  const fecha = ['Viernes, 15 de Julio', 'Sabado, 29 de Julio', 'Sábado, 1 de Julio'];
+  const eventos = ['Natanael Cano',];
+  const fecha = ['Viernes, 15 de Julio'];
 
   const handleSync = () => {
     setIsSyncing(true);

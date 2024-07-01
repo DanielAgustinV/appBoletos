@@ -44,7 +44,7 @@ function QRscanner() {
     const enviaQr = async (url) => {
 
       let nuevaUrl = url.replace('https://', 'http://');
-      console.log(nuevaUrl);
+      // console.log(nuevaUrl);
         try {
           const token = await obtener('token');
           if (!token) {
