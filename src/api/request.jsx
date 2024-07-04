@@ -1,7 +1,7 @@
 import axios from 'react-native-axios';
 import endpoints from './endponits';
 
-const ApiRequest = async (data,endpoiname,tipo) => {
+const ApiRequest = async (data,endpoiname,tipo,token) => {
   try {
     console.log(endpoints.urlproductivo + '/' + endpoiname);
     const response = await axios({
@@ -10,12 +10,15 @@ const ApiRequest = async (data,endpoiname,tipo) => {
       data: data,
       headers:  {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
     });
       // console.log('RESPUESTA' + response.data);
-      console.log(response.data);
+      // if(response.status == 200){
+        return response.data;
+      // }
+      // console.log(response.status);
 
-    return response.data;
   } catch (error) {
     if (error.response) {      
       // El servidor respondió con un código de error (no 2xx)

@@ -13,6 +13,7 @@ import Qr from '../scanner/Qr'
 import btn from '../btn'
 import WelcomeScreen from '../home/Welcome'
 import Boletos from '../scanner/boletos'
+import Descargas from '../boletos_descargados';
 
 
 
@@ -47,6 +48,7 @@ function MyTabs() {
       <Tab.Screen name="QR Scanner" component={Qr} />
       <Tab.Screen name="Boletos" component={Boletos} />
       <Tab.Screen name="Mas" component={Menu} />
+      <Tab.Screen name="Descargas" component={Descargas} />
     </Tab.Navigator>
   );
 }

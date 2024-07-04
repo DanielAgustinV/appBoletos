@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     iconButtonHomeContainer: { marginRight: 10 },
     iconButtonHome: {
         type: 'material',
-        size: 40,
+        size: 20,
         color: 'white',
     },
     titleButtonHome: { 
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     },
     buttonHomeContainer: {
         width: 300,
-        marginHorizontal: 50,
+        marginHorizontal: 30,
         marginVertical: 20,
     },
     overlay: {
@@ -41,6 +41,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#fff',
       },
+      buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+        marginBottom: 10
+    },
 });
 
 export default styles;

@@ -7,8 +7,12 @@ import { RNCamera } from 'react-native-camera';
 import axios from 'react-native-axios';
 import { obtener } from '../../helper/storage';
 import CustomAlert from '../ui/alerts';
+import { useRoute } from '@react-navigation/native';
+import { connectToDatabase, createTableIfNotExists, insertBoleto, updateBoleto, getBoletos ,clearTable} from '../../database/database';
+import ApiRequest from '../../api/request';
+import endponints from '../../api/endponits';
 
-function QRscanner() {
+function QRscanner({navigation}) {
     const [qrValue, setQrValue] = useState('');
     const [light, setLight] = useState(false);
     const [showDialog, setShowDialog] = useState(false);
@@ -17,6 +21,9 @@ function QRscanner() {
     const [responsemensaje, setResponsemensaje] = useState(null);
     const [responsesuccess, setResponsesuccess] = useState(true);
     const [icon, setIcon] = useState(true);
+    const [showButton, setShowButton] = useState(false);
+    const [boletos, setBoletos] = useState(false);
+
 
     const closeAlert = () => {
       scannerRef.current.reactivate();
@@ -31,18 +38,30 @@ function QRscanner() {
         return base64Regex.test(str);
     };
 
-    const handleScan = (e) => {
+    const handleScan = (e,flag) => {
+      // console.log('ESTO ES FLAG' + flag);
+      // console.log(flag);
+      // const sinConexion = flag;
+       console.log(flag);
         const scannedData = e.data;
         if (isBase64(scannedData)) {
             const decodedValue = atob(scannedData); // Decodificar base64
             setQrValue(decodedValue);
-            enviaQr(decodedValue); // Enviar datos al servicio
+            enviaQr(decodedValue,flag);
+             // Enviar datos al servicio
+             setShowButton(flag == 1 ? false : true);
         } else {
             Alert.alert('Error', 'El código QR no es válido.');
         }
     };
-    const enviaQr = async (url) => {
-
+    const enviaQr = async (url,flag) => {
+      // console.log('esto es sla vandera para cuando no hay conexion '+ flag);
+      if (flag == 0){
+        console.log('Escaneo de boletos sin conexion a internet');
+        const id_asiento = url.split('/').pop();
+        // console.log(id_asiento);
+        actualizaEstatusboleto(id_asiento);
+      } else {
       let nuevaUrl = url.replace('https://', 'http://');
       // console.log(nuevaUrl);
         try {
@@ -124,27 +143,204 @@ function QRscanner() {
             console.error('Error respuesta servicio:', error);
           }
         }
+      }
       };
+
+      const actualizaEstatusboleto = async (id_asiento) => {
+        console.log('entra a actualizar boletos');
+        console.log(id_asiento);
+        try {
+          const message = await updateBoleto(id_asiento, 4);
+        //   console.log(message);
+      //     Alert.alert(message);
+      // scannerRef.current.reactivate();
+          Alert.alert(
+            'Exito',
+            message,
+            [
+              {
+                text: 'Cancelar',
+                style: 'cancel',
+              },
+              {
+                text: 'Aceptar',
+                onPress: async () => {
+                  // navigation.replace('Home');
+                  scannerRef.current.reactivate();
+
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+          // fetchBoletos(); // Actualizar la lista de boletos después de actualizar
+        } catch (error) {
+        //   console.error(error);
+        Alert.alert(
+          'Error',
+          error,
+          [
+            {
+              text: 'Cancelar',
+              style: 'cancel',
+            },
+            {
+              text: 'Aceptar',
+              onPress: async () => {
+                // navigation.replace('Home');
+                scannerRef.current.reactivate();
+
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+
+        }
+      };
+
+      const boletosConfirmados  = async () => {
+
+        try {
+          const data = await getBoletos();
+          console.log(typeof data);
+          setBoletos(true)
+          console.log(data);
+          // setBoletos(data);
+          if(boletos){
+            Alert.alert(
+              'Atencion',
+              '¿Estás seguro de cargar esta información?',
+              [
+                {
+                  text: 'Cancelar',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Si,Confirmar',
+                  onPress: async () => {
+                     cargarBoletosconfirmados(data);
+                  },
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+
+      const cargarBoletosconfirmados =  async (boletos) =>{
+
+        // console.log(data);
+        // return;
+
+        try {
+        const token = await obtener('token');
+        const id_usuario = await obtener('usuario');
+        // console.log(id_usuario);
+        // return;
+        const datos= {
+          id_usuario: id_usuario,
+          boletos: boletos
+        };
+        console.log(datos);
+        // return;
+
+          // setLoading(true);
+          const data = await ApiRequest( datos, endponints.cargaboletos,'POST',token);
+          // const token = data.token;
+          // console.log(token);
+          // navigation.replace('Home');
+          if(data.success == true){
+            Alert.alert(
+              'Exito',
+              data.mensaje,
+              [
+                {
+                  text: 'Cancelar',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Aceptar',
+                  onPress: async () => {
+                    navigation.replace('Home');
+                    scannerRef.current.reactivate();
+
+                  },
+                },
+              ],
+              { cancelable: false }
+            );
+            // Alert.alert('Exito',data.mensaje)
+            
+            
+          } else if (data.success == false){
+            Alert.alert(
+              'Error',
+              data.mensaje,
+              [
+                {
+                  text: 'Cancelar',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Aceptar',
+                  onPress: async () => {
+                    // navigation.replace('Home');
+                    scannerRef.current.reactivate();
+
+                  },
+                },
+              ],
+              { cancelable: false }
+            );
+
+          }
+        } catch (error) {
+
+          console.error('Error al obtener datos:', error);
+        }
+      }
       
-    
+      const route = useRoute();
+      const  flag = route.params?.flag;
+      // setFlag(route.params?.flag)
+      // console.log(flag);
 
     return (
         <View style={styles.container}>
             <QRCodeScanner
                 ref={scannerRef}
-                onRead={handleScan}
+                onRead={(e) => handleScan(e, flag == undefined ? 1 : flag)}
                 flashMode={light ? RNCamera.Constants.FlashMode.torch : RNCamera.Constants.FlashMode.auto}
                 topContent={<></>}
                 bottomContent={
+                    <View style={styles.buttonContainer}>
                     <Button
-                        title={`Flash ${light ? 'OFF' : 'ON'}`}
-                        icon={{ ...styles.iconButtonHome, size: 20, name: 'qr-code-scanner' }}
+                        title={` ${light ? 'OFF' : 'ON'}`}
+                        icon={{ ...styles.iconButtonHome, size: 20, name: light ? 'flash-off': 'flash-on'}}
                         iconContainerStyle={styles.iconButtonHomeContainer}
                         titleStyle={{ ...styles.titleButtonHome, fontSize: 20 }}
-                        buttonStyle={{ ...styles.buttonHome, height: 50 }}
-                        containerStyle={{ ...styles.buttonHomeContainer, marginTop: 20, marginBottom: 10 }}
+                        buttonStyle={{ ...styles.buttonHome, height: 40 ,}}
+                        containerStyle={{ ...styles.buttonHomeContainer, flex: 1 }}
                         onPress={() => { setLight(!light) }}
                     />
+
+                     {showButton && (
+                        <Button
+                        title="Subir"
+                        icon={{ ...styles.iconButtonHome, size: 20, name: 'cloud-upload' }}
+                        iconContainerStyle={styles.iconButtonHomeContainer}
+                        titleStyle={{ ...styles.titleButtonHome, fontSize: 20 }}
+                        buttonStyle={{ ...styles.buttonHome, height: 40 }}
+                        containerStyle={{ ...styles.buttonHomeContainer, flex: 1 }}
+                        onPress={() => { boletosConfirmados()  }}
+                        />
+                    )}
+                </View>
                 }
             />
             <View style={styles.overlay}>
@@ -155,7 +351,7 @@ function QRscanner() {
                 <CustomAlert
                   visible={alertVisible}
                   icon={icon ?'check' : 'error' }
-                  title={icon ? 'Éxito' : 'Error..'}
+                  title={icon ? 'Éxito' : 'Error'}
                   message={responsemensaje}
                   options={options}
                   onClose={closeAlert}

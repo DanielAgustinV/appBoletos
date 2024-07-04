@@ -6043,6 +6043,11 @@ react-native-size-matters@^0.4.0:
   resolved "https://registry.npmjs.org/react-native-size-matters/-/react-native-size-matters-0.4.2.tgz"
   integrity sha512-DKE3f/sdcozd24oASgkP1iGg+YU3HoajRa5k3a4wkRzpiqREq8SGX12Y5zBgAt/8IivLQoTMYkyQu1/Giuy+zQ==
 
+react-native-sqlite-storage@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.npmjs.org/react-native-sqlite-storage/-/react-native-sqlite-storage-6.0.1.tgz"
+  integrity sha512-1tDFjrint6X6qSYKf3gDyz+XB+X79jfiL6xTugKHPRtF0WvqMtVgdLuNqZunIXjNEvNtNVEbXaeZ6MsguFu00A==
+
 react-native-vector-icons@^10.1.0, react-native-vector-icons@>7.0.0:
   version "10.1.0"
   resolved "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-10.1.0.tgz"
@@ -6051,7 +6056,7 @@ react-native-vector-icons@^10.1.0, react-native-vector-icons@>7.0.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.57, react-native@>=0.60.0, react-native@>=0.62.0, react-native@>=0.70.0, react-native@0.74.1:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.14.0, react-native@>=0.57, react-native@>=0.60.0, react-native@>=0.62.0, react-native@>=0.70.0, react-native@0.74.1:
   version "0.74.1"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.74.1.tgz"
   integrity sha512-0H2XpmghwOtfPpM2LKqHIN7gxy+7G/r1hwJHKLV6uoyXGC/gCojRtoo5NqyKrWpFC8cqyT6wTYCLuG7CxEKilg==

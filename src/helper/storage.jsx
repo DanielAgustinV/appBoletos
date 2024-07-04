@@ -16,7 +16,7 @@ export const obtener = async (name) => {
   try {
     const token = await AsyncStorage.getItem(name);
     if (token) {
-      console.log('Token recuperado desde el almacenamiento local:', token);
+      // console.log('Token recuperado desde el almacenamiento local:', token);
       return token;
     } else {
       console.log('No se encontró un token en el almacenamiento local.');

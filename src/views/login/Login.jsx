@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView,Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView,Alert ,ActivityIndicator} from 'react-native';
 import ApiRequest from '../../api/request';
 import endpoints from '../../api/endponits';
 // import { useAuth } from '../../helper/AuthContext';
@@ -21,6 +21,8 @@ const LoginScreen = ({navigation}) => {
   const [responsemensaje, setResponsemensaje] = useState(null);
   const [responsesuccess, setResponsesuccess] = useState(true);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [loading, setLoading] = useState(false);
+
 
   const toggleSecureTextEntry = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -40,28 +42,29 @@ const LoginScreen = ({navigation}) => {
   ];
   const valida = async () => {
     // navigation.navigate('HomePuller');
-    if (email == '' || password == '') {
-      Alert.alert('Por favor llena todos los campos');
-      return;
-    } else if (!validateEmail(email)){
-      Alert.alert('Correo electrónico no valido');
-    }else if(!password){
-      Alert.alert('Contraseña no valida');
-    }else{
+    // if (email == '' || password == '') {
+    //   Alert.alert('Por favor llena todos los campos');
+    //   return;
+    // } else if (!validateEmail(email)){
+    //   Alert.alert('Correo electrónico no valido');
+    // }else if(!password){
+    //   Alert.alert('Contraseña no valida');
+    // }else{
       // navigation.replace('HomePuller')
       // console.log('check' +isChecked);
-      const datos = {
-          usuario : email,
-          password :password,
-      };
+      // const datos = {
+      //     usuario : email,
+      //     password :password,
+      // };
       console.log(datos);
-    //   const datos = {
-    //     usuario : "escaner@fasticket.mx",
-    //     password :"Fa5tick3t.mx",
-    // };
+      const datos = {
+        usuario : "escaner@fasticket.mx",
+        password :"Fa5tick3t.mx",
+    };
       console.log(datos);
 
             try {
+              setLoading(true);
         const data = await ApiRequest( datos, endpoints.login,'POST');
         // const token = data.token;
         // console.log(token);
@@ -75,6 +78,7 @@ const LoginScreen = ({navigation}) => {
           const userData = data;
           // login(token,userData);
           guardar('token',token)
+          guardar('usuario',data.usuario.id_usuario.toString())
           // const guardarToken = async (token) => await AsyncStorage.setItem('@token', token)
 
             navigation.replace('Home');
@@ -82,6 +86,8 @@ const LoginScreen = ({navigation}) => {
           setResponsemensaje(data.mensaje);
           setResponsesuccess(data.success)
           setAlertVisible(true);
+          setLoading(false);
+
         }
       } catch (error) {
 
@@ -89,7 +95,7 @@ const LoginScreen = ({navigation}) => {
       }
       // Alert.alert('respuesta de login');
 
-    }
+    // }
   };
   const validateEmail = (email) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -128,7 +134,11 @@ return (
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.loginButton} onPress={valida}>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
           <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        )}
         </TouchableOpacity>
         <TouchableOpacity style={styles.forgotPasswordButton}>
           <Text style={styles.forgotPasswordText}></Text>
@@ -148,7 +158,7 @@ return (
         <CustomAlert
           visible={alertVisible}
           icon={'cancel'}
-          title={responsesuccess ? 'Éxito' : 'Error..'}
+          title={responsesuccess ? 'Éxito' : 'Error'}
           message={responsemensaje}
           options={options}
           onClose={closeAlert}
