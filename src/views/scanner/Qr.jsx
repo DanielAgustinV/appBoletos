@@ -11,6 +11,11 @@ import { useRoute } from '@react-navigation/native';
 import { connectToDatabase, createTableIfNotExists, insertBoleto, updateBoleto, getBoletos ,clearTable} from '../../database/database';
 import ApiRequest from '../../api/request';
 import endponints from '../../api/endponits';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { Icon } from 'react-native-elements';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+
+
 
 function QRscanner({navigation}) {
     const [qrValue, setQrValue] = useState('');
@@ -23,11 +28,13 @@ function QRscanner({navigation}) {
     const [icon, setIcon] = useState(true);
     const [showButton, setShowButton] = useState(false);
     const [boletos, setBoletos] = useState(false);
+    const netInfo = useNetInfo();
 
 
     const closeAlert = () => {
+      Dialog.hide();
       scannerRef.current.reactivate();
-      setAlertVisible(false);         
+      // setAlertVisible(false);         
     };
     const options = [
       { text: 'Aceptar', onPress: closeAlert },
@@ -103,10 +110,18 @@ function QRscanner({navigation}) {
           if (response.status === 200) {
             // console.log('ENTROOO');
       // scannerRef.current.reactivate();
+            Dialog.show({
+              type: ALERT_TYPE.SUCCESS,
+              title: 'Exito',
+              textBody: data.mensaje,
+              button: 'Aceptar',
+               closeOnOverlayTap: true,
+              onPressButton:() => { closeAlert()}
+            })
 
-            setResponsemensaje(data.mensaje);
-            setResponsesuccess(false)
-            setIcon(data.success);
+            // setResponsemensaje(data.mensaje);
+            // setResponsesuccess(false)
+            // setIcon(data.success);
 
             // setAlertVisible(true);
 
@@ -114,10 +129,17 @@ function QRscanner({navigation}) {
             //     { text: 'OK', onPress: () => scannerRef.current.reactivate() }
             //   ]);
           } else {
-
-            setResponsemensaje(data.mensaje);
-            setResponsesuccess(data.success);
-            setIcon(data.success);
+            Dialog.show({
+              type: ALERT_TYPE.DANGER,
+              title: 'Error',
+              textBody: data.mensaje,
+              button: 'Aceptar',
+               closeOnOverlayTap: true,
+              onPressButton:() => { closeAlert()}
+            })
+            // setResponsemensaje(data.mensaje);
+            // setResponsesuccess(data.success);
+            // setIcon(data.success);
 
             // setAlertVisible(true);
 
@@ -130,9 +152,17 @@ function QRscanner({navigation}) {
         } catch (error) {
           console.error('Error:', error.message);
           if (error.message.includes('Network request failed')) {
-            setResponsemensaje('Error de red', 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.');
-            setResponsesuccess(false)
-            setAlertVisible(true);
+            // setResponsemensaje('Error de red', 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.');
+            // setResponsesuccess(false)
+            // setAlertVisible(true);
+            Dialog.show({
+              type: ALERT_TYPE.DANGER,
+              title: 'Error',
+              textBody: 'Error de red, No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.',
+              button: 'Aceptar',
+               closeOnOverlayTap: true,
+              onPressButton:() => { closeAlert}
+            })
             scannerRef.current.reactivate();
 
             // Alert.alert('Error de red', 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a Internet.');
@@ -147,88 +177,112 @@ function QRscanner({navigation}) {
       };
 
       const actualizaEstatusboleto = async (id_asiento) => {
-        console.log('entra a actualizar boletos');
-        console.log(id_asiento);
+        // console.log('entra a actualizar boletos');
+        // console.log(id_asiento);
         try {
           const message = await updateBoleto(id_asiento, 4);
         //   console.log(message);
       //     Alert.alert(message);
       // scannerRef.current.reactivate();
-          Alert.alert(
-            'Exito',
-            message,
-            [
-              {
-                text: 'Cancelar',
-                style: 'cancel',
-              },
-              {
-                text: 'Aceptar',
-                onPress: async () => {
-                  // navigation.replace('Home');
-                  scannerRef.current.reactivate();
+          // Alert.alert(
+          //   'Exito',
+          //   message,
+          //   [
+          //     {
+          //       text: 'Cancelar',
+          //       style: 'cancel',
+          //     },
+          //     {
+          //       text: 'Aceptar',
+          //       onPress: async () => {
+          //         // navigation.replace('Home');
+          //         scannerRef.current.reactivate();
 
-                },
-              },
-            ],
-            { cancelable: false }
-          );
+          //       },
+          //     },
+          //   ],
+          //   { cancelable: false }
+          // );
+          Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Exito',
+            textBody: message,
+            button: 'Aceptar',
+             closeOnOverlayTap: true,
+            onPressButton:() => {closeAlert()}
+          })
           // fetchBoletos(); // Actualizar la lista de boletos después de actualizar
         } catch (error) {
         //   console.error(error);
-        Alert.alert(
-          'Error',
-          error,
-          [
-            {
-              text: 'Cancelar',
-              style: 'cancel',
-            },
-            {
-              text: 'Aceptar',
-              onPress: async () => {
-                // navigation.replace('Home');
-                scannerRef.current.reactivate();
+        // Alert.alert(
+        //   'Error',
+        //   error,
+        //   [
+        //     {
+        //       text: 'Cancelar',
+        //       style: 'cancel',
+        //     },
+        //     {
+        //       text: 'Aceptar',
+        //       onPress: async () => {
+        //         // navigation.replace('Home');
+        //         scannerRef.current.reactivate();
 
-              },
-            },
-          ],
-          { cancelable: false }
-        );
+        //       },
+        //     },
+        //   ],
+        //   { cancelable: false }
+        // );
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: 'Error..',
+          textBody: error,
+          button: 'Aceptar',
+          closeOnOverlayTap: true,
+          onPressButton:() => { closeAlert()}
+        })
 
         }
       };
 
       const boletosConfirmados  = async () => {
 
-        try {
-          const data = await getBoletos();
-          console.log(typeof data);
-          setBoletos(true)
-          console.log(data);
-          // setBoletos(data);
-          if(boletos){
-            Alert.alert(
-              'Atencion',
-              '¿Estás seguro de cargar esta información?',
-              [
-                {
-                  text: 'Cancelar',
-                  style: 'cancel',
-                },
-                {
-                  text: 'Si,Confirmar',
-                  onPress: async () => {
-                     cargarBoletosconfirmados(data);
-                  },
-                },
-              ],
-              { cancelable: false }
-            );
-          }
-        } catch (error) {
-          console.error(error);
-        }
+        Dialog.show({
+          type: ALERT_TYPE.WARNING,
+          title: 'Atencion',
+          textBody: '¿Quieres consultar los boletos confirmados?',
+          button: 'Si',
+          // closeOnOverlayTap: true,
+          onPressButton:() => { navigation.navigate('Escaneados')}
+        })
+        // try {
+        //   const data = await getBoletos();
+        //   console.log(typeof data);
+        //   setBoletos(true)
+        //   console.log(data);
+        //   // setBoletos(data);
+        //   if(boletos){
+        //     Alert.alert(
+        //       'Atencion',
+        //       '¿Estás seguro de cargar esta información?',
+        //       [
+        //         {
+        //           text: 'Cancelar',
+        //           style: 'cancel',
+        //         },
+        //         {
+        //           text: 'Si,Confirmar',
+        //           onPress: async () => {
+        //              cargarBoletosconfirmados(data);
+        //           },
+        //         },
+        //       ],
+        //       { cancelable: false }
+        //     );
+        //   }
+        // } catch (error) {
+        //   console.error(error);
+        // }
       };
 
 
@@ -305,13 +359,46 @@ function QRscanner({navigation}) {
         }
       }
       
+      const sincronizar = () =>{
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: 'Atencion',
+          textBody: '¿Quieres sincronizar nuevamente el evento?, la informacion anterior de perdera.',
+          button: 'SI',
+          closeOnOverlayTap: true,
+          onPressButton:() => {borrarRegistros()}
+        })
+      }
+
+      const borrarRegistros = async () =>{
+        try {
+          const message = await clearTable();
+          console.log(message);
+          // navigation.replace('Home');
+          navigation.navigate('Home');
+        } catch (error) {
+          // console.error(error);
+          Toast.show({
+            type: ALERT_TYPE.DANGER,
+            title: 'Error',
+            textBody: error,
+          })
+        }
+        
+      }
       const route = useRoute();
       const  flag = route.params?.flag;
       // setFlag(route.params?.flag)
       // console.log(flag);
 
     return (
+      <AlertNotificationRoot>
         <View style={styles.container}>
+            {!netInfo.isConnected && (
+              <View style={styles.noConnectionMessage}>
+                <Text style={styles.noConnectionText}>No hay conexión a Internet</Text>
+              </View>
+            )}
             <QRCodeScanner
                 ref={scannerRef}
                 onRead={(e) => handleScan(e, flag == undefined ? 1 : flag)}
@@ -320,7 +407,7 @@ function QRscanner({navigation}) {
                 bottomContent={
                     <View style={styles.buttonContainer}>
                     <Button
-                        title={` ${light ? 'OFF' : 'ON'}`}
+                        title=''
                         icon={{ ...styles.iconButtonHome, size: 20, name: light ? 'flash-off': 'flash-on'}}
                         iconContainerStyle={styles.iconButtonHomeContainer}
                         titleStyle={{ ...styles.titleButtonHome, fontSize: 20 }}
@@ -328,11 +415,10 @@ function QRscanner({navigation}) {
                         containerStyle={{ ...styles.buttonHomeContainer, flex: 1 }}
                         onPress={() => { setLight(!light) }}
                     />
-
-                     {showButton && (
+                     { flag == undefined ? false : true  && (
                         <Button
-                        title="Subir"
-                        icon={{ ...styles.iconButtonHome, size: 20, name: 'cloud-upload' }}
+                        title=""
+                        icon={{ ...styles.iconButtonHome, size: 20, name: 'add-to-drive' }}
                         iconContainerStyle={styles.iconButtonHomeContainer}
                         titleStyle={{ ...styles.titleButtonHome, fontSize: 20 }}
                         buttonStyle={{ ...styles.buttonHome, height: 40 }}
@@ -340,6 +426,18 @@ function QRscanner({navigation}) {
                         onPress={() => { boletosConfirmados()  }}
                         />
                     )}
+                     {flag == undefined ? false : true  && (
+                        <Button
+                        title=""
+                        icon={{ ...styles.iconButtonHome, size: 20, name: 'cancel' }}
+                        iconContainerStyle={styles.iconButtonHomeContainer}
+                        titleStyle={{ ...styles.titleButtonHome, fontSize: 20 }}
+                        buttonStyle={{ ...styles.buttoncancel, height: 40 }}
+                        containerStyle={{ ...styles.buttonHomeContainer, flex: 1 }}
+                        onPress={() => { sincronizar()  }}
+                        />
+                    )}
+                    
                 </View>
                 }
             />
@@ -359,6 +457,8 @@ function QRscanner({navigation}) {
               )}
           </View>
         </View>
+        {/* <Toast ref={(ref) => Toast.setRef(ref)} /> */}
+        </AlertNotificationRoot>
     );
 }
 

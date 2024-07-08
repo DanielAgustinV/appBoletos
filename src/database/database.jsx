@@ -88,8 +88,8 @@ const getBoletos = async () => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        // `SELECT id_asiento FROM boletos WHERE id_estatus = 4`,
-        'SELECT * FROM boletos',
+        `SELECT id_asiento FROM boletos WHERE id_estatus = 4`,
+        // 'SELECT * FROM boletos',
         [],
         (_, results) => {
           const boletos = [];

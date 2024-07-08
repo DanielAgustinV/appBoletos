@@ -22,6 +22,8 @@ const CerrarSesion = () => {
   // logout('Login');
   // obtener('token')
   guardar('token','')
+  guardar('email','')
+  guardar('password','')
   navigation.replace('Login');
   setAlertVisible(false);
 
@@ -34,9 +36,7 @@ const options = [
 
   // Definición del array de elementos del menú
   const menuItems = [
-    { name: 'Perfil', route: 'Home', icon: 'person-outline' },
-    { name: 'Notificaciones', route: 'i', icon: 'notifications-none' },
-    { name: 'Ajustes', route: 'o', icon: 'notifications-none' },
+    { name: 'Boletos Confirmados', route: 'Escaneados', icon: 'sticky-note-2' },
     // Agrega más elementos según sea necesario
   ];
 
@@ -52,11 +52,11 @@ const options = [
 
   return (
     <View style={styles.container}>
-      {/* <FlatList
+      <FlatList
         data={menuItems}
         renderItem={renderItem}
         keyExtractor={(item) => item.route}
-      /> */}
+      />
       <TouchableOpacity style={styles.logoutButton} onPress={Alerta}>
         <Text style={styles.logoutText}>Cerrar sesión</Text>
       </TouchableOpacity>
@@ -106,3 +106,5 @@ const styles = StyleSheet.create({
 });
 
 export default Sidebar;
+
+

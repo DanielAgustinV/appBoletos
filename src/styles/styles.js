@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         margin: 30,
     },
-    iconButtonHomeContainer: { marginRight: 10 },
+    iconButtonHomeContainer: { marginRight: 5 },
     iconButtonHome: {
         type: 'material',
         size: 20,
@@ -22,7 +22,15 @@ const styles = StyleSheet.create({
         // backgroundColor: 'rgba(255, 103, 7, 1)',
         borderColor: 'transparent',
         borderWidth: 0,
-        borderRadius: 30,
+        borderRadius: 20,
+        height: 100,
+    },
+    buttoncancel:{
+        backgroundColor: 'red',
+        // backgroundColor: 'rgba(255, 103, 7, 1)',
+        borderColor: 'transparent',
+        borderWidth: 0,
+        borderRadius: 20,
         height: 100,
     },
     buttonHomeContainer: {
@@ -47,6 +55,43 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 10
     },
+    appBar: {
+    // position: 'absolute',
+    // bottom: 10,
+    // right: 10,
+    // justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  appBarButton: {
+    backgroundColor: '#6200EE',
+    borderRadius: 50,
+    padding: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  overlayconection: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  conection: {
+    fontSize: 40,
+    color: 'red',
+  },
+//   noConnectionMessage: {
+//     backgroundColor: 'red',
+//     padding: 10,
+//     alignItems: 'center',
+//   },
+  noConnectionText: {
+    color: 'red',
+    fontSize: 20,
+  },
 });
 
 export default styles;

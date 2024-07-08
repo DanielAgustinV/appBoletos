@@ -48,7 +48,7 @@ function MyTabs() {
       <Tab.Screen name="QR Scanner" component={Qr} />
       <Tab.Screen name="Boletos" component={Boletos} />
       <Tab.Screen name="Mas" component={Menu} />
-      <Tab.Screen name="Descargas" component={Descargas} />
+      {/* <Tab.Screen name="Descargas" component={Descargas} /> */}
     </Tab.Navigator>
   );
 }

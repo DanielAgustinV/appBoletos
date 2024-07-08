@@ -1,21 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView,Alert ,ActivityIndicator} from 'react-native';
 import ApiRequest from '../../api/request';
 import endpoints from '../../api/endponits';
 // import { useAuth } from '../../helper/AuthContext';
 import CustomAlert from '../ui/alerts';
 // import { useNavigation } from '@react-navigation/native';
-import {guardar} from '../../helper/storage';
+import {guardar,obtener} from '../../helper/storage';
 import { Icon } from 'react-native-elements';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
 
 
 const LoginScreen = ({navigation}) => {
 
+  useEffect(() => {
+    const remenber = async () => {
+      // var user = obtener('email');
+      // var pass = obtener('password');
+      const pass = await obtener('password');
+      const user = await obtener('email');
+      const savetoken = await obtener('token');
+      // console.log(pass);
+      if(user != '' && pass != ''){
+        // console.log('entra ');
+        // console.log(user);
+        // console.log(pass);
+        setUsuario(user);
+        sertContrasena(pass);
+        setToken(savetoken);
+
+      }else {
+        // console.log(' no entra ');
+
+        setUsuario('');
+        sertContrasena('');
+        setToken('');
+
+      }
+    };
+
+    remenber();
+  }, []);
+
   // const { login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [contrasena, sertContrasena] = useState('');
+  const [usuario, setUsuario] = useState('');
+  const [accesstoken, setToken] = useState('');
+
 
   const [alertVisible, setAlertVisible] = useState(true);
   const [responsemensaje, setResponsemensaje] = useState(null);
@@ -43,25 +78,44 @@ const LoginScreen = ({navigation}) => {
   const valida = async () => {
     // navigation.navigate('HomePuller');
     // if (email == '' || password == '') {
-    //   Alert.alert('Por favor llena todos los campos');
+    //   // Alert.alert('Por favor llena todos los campos');
+    //   Toast.show({
+    //     type: ALERT_TYPE.DANGER,
+    //     title: 'Error',
+    //     textBody: 'Por favor llena todos los campos',
+    //   })
     //   return;
     // } else if (!validateEmail(email)){
-    //   Alert.alert('Correo electrónico no valido');
+    //   // Alert.alert('Correo electrónico no valido');
+    //   Toast.show({
+    //     type: ALERT_TYPE.DANGER,
+    //     title: 'Error',
+    //     textBody: 'Correo electrónico no valido',
+    //   })
     // }else if(!password){
-    //   Alert.alert('Contraseña no valida');
+    //   Toast.show({
+    //     type: ALERT_TYPE.DANGER,
+    //     title: 'Error',
+    //     textBody: 'Contraseña no valida',
+    //   })
+    //   // Alert.alert('Contraseña no valida');
+    // }else
+    // if(accesstoken != '' && accesstoken == null ){
+    //   console.log(accesstoken);
+    //   console.log('entr000');
+    //   // navigation.replace('Home');
     // }else{
-      // navigation.replace('HomePuller')
-      // console.log('check' +isChecked);
-      // const datos = {
-      //     usuario : email,
-      //     password :password,
-      // };
-      console.log(datos);
       const datos = {
-        usuario : "escaner@fasticket.mx",
-        password :"Fa5tick3t.mx",
-    };
-      console.log(datos);
+          usuario : email == '' ? usuario : email,
+          password :password == '' ? contrasena : password,
+      };
+
+    //   console.log(datos);
+    //   const datos = {
+    //     usuario : "escaner@fasticket.mx",
+    //     password :"Fa5tick3t.mx",
+    // };
+      // console.log(datos);
 
             try {
               setLoading(true);
@@ -73,99 +127,112 @@ const LoginScreen = ({navigation}) => {
         // setResponseData(data);
 
           const token = data.token;
-          console.log(token);
+          // console.log(token);
           // return;
           const userData = data;
           // login(token,userData);
-          guardar('token',token)
-          guardar('usuario',data.usuario.id_usuario.toString())
+          guardar('token',token);
+          guardar('usuario',data.usuario.id_usuario.toString());
+          guardar('email',email == '' ? usuario : email);
+          guardar('password',password == '' ? contrasena : password);
+    
+
           // const guardarToken = async (token) => await AsyncStorage.setItem('@token', token)
 
             navigation.replace('Home');
         } else if (data.success == false){
-          setResponsemensaje(data.mensaje);
-          setResponsesuccess(data.success)
-          setAlertVisible(true);
+          Dialog.show({
+            type: ALERT_TYPE.DANGER,
+            title: 'Error',
+            textBody: data.mensaje,
+            button: 'Aceptar',
+          })
+          // setResponsemensaje(data.mensaje);
+          // setResponsesuccess(data.success)
+          // setAlertVisible(true);
           setLoading(false);
 
         }
       } catch (error) {
 
         console.error('Error al obtener datos:', error);
-      }
+      // }
       // Alert.alert('respuesta de login');
 
-    // }
+    }
   };
   const validateEmail = (email) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   };
-
+// console.log('esto es usuaro'+ usuario);
+// console.log('esto es contra'+contrasena);
 
 return (
-  <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={require('../../assets/logo.png')} style={styles.logo} />
-      </View>
-      {/* <Text style={styles.title}>Iniciar Sesión d</Text> */}
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Correo electrónico"
-          placeholderTextColor="#fff" // Color del placeholder
-          onChangeText={text => setEmail(text)}
-          value={email}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <View style={styles.passwordContainer}>
+  <AlertNotificationRoot>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <Image source={require('../../assets/logo.png')} style={styles.logo} />
+        </View>
+        {/* <Text style={styles.title}>Iniciar Sesión d</Text> */}
+        <View style={styles.form}>
           <TextInput
-            style={[styles.input, styles.passwordInput]}
-            placeholder="Contraseña"
+            style={styles.input}
+            placeholder="Correo electrónico"
             placeholderTextColor="#fff" // Color del placeholder
-            onChangeText={text => setPassword(text)}
-            value={password}
-            secureTextEntry={secureTextEntry}
+            onChangeText={text => setEmail(text)}
+            value={usuario == '' ? email : usuario}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
-          <TouchableOpacity onPress={toggleSecureTextEntry} style={styles.iconContainer}>
-            <Icon name={secureTextEntry ? 'visibility-off' : 'visibility'} size={20} color="#fff" />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={[styles.input, styles.passwordInput]}
+              placeholder="Contraseña"
+              placeholderTextColor="#fff" // Color del placeholder
+              onChangeText={text => setPassword(text)}
+              value={contrasena != '' ? contrasena : password}
+              secureTextEntry={secureTextEntry}
+            />
+            <TouchableOpacity onPress={toggleSecureTextEntry} style={styles.iconContainer}>
+              <Icon name={secureTextEntry ? 'visibility-off' : 'visibility'} size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.loginButton} onPress={valida}>
+          {loading ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          )}
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.forgotPasswordButton}>
+            <Text style={styles.forgotPasswordText}></Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.registerButton}>
+            <Text style={styles.registerText}></Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.loginButton} onPress={valida}>
-        {loading ? (
-          <ActivityIndicator size="small" color="#ffffff" />
-        ) : (
-          <Text style={styles.buttonText}>Iniciar Sesión</Text>
-        )}
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.forgotPasswordButton}>
-          <Text style={styles.forgotPasswordText}></Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.registerButton}>
-          <Text style={styles.registerText}></Text>
-        </TouchableOpacity>
+        {/* <Alert
+        title="Alerta personalizada"
+        message="¡Esto es un mensaje de alerta personalizado!"
+        onPress={valida}
+      /> */}
       </View>
-      {/* <Alert
-      title="Alerta personalizada"
-      message="¡Esto es un mensaje de alerta personalizado!"
-      onPress={valida}
-    /> */}
-    </View>
-    <View>
-      {!responsesuccess && (
-        <CustomAlert
-          visible={alertVisible}
-          icon={'cancel'}
-          title={responsesuccess ? 'Éxito' : 'Error'}
-          message={responsemensaje}
-          options={options}
-          onClose={closeAlert}
-        />
-      )}
-    </View>
-  </ScrollView>
+      <View>
+        {!responsesuccess && (
+          <CustomAlert
+            visible={alertVisible}
+            icon={'cancel'}
+            title={responsesuccess ? 'Éxito' : 'Error'}
+            message={responsemensaje}
+            options={options}
+            onClose={closeAlert}
+          />
+        )}
+      </View>
+    </ScrollView>
+  </AlertNotificationRoot>
 );
 };
 

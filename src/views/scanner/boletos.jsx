@@ -7,6 +7,8 @@ import { obtener } from '../../helper/storage';
 import ApiRequest from '../../api/request';
 import { createTableIfNotExists, insertBoleto, updateBoleto, getBoletos,connectToDatabase } from '../../database/database';
 import CustomAlert from '../ui/alerts';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+
 // const db = SQLite.openDatabase({ name: 'evento.db', location: 'default' });
 
 const Boletos = ({navigation}) => {
@@ -31,7 +33,7 @@ const Boletos = ({navigation}) => {
 
 
   const closeAlert = () => {
-    setAlertVisible(false);
+    // setAlertVisible(false);
     navigation.replace('Escaner',{ flag: 0});
       
   };
@@ -67,6 +69,14 @@ const Boletos = ({navigation}) => {
             initializeDatabase();
           }else{
             Alert.alert('Error', data.eventos);
+            Dialog.show({
+              type: ALERT_TYPE.DANGER,
+              title: 'Atencion',
+              textBody: data.eventos,
+              button: 'Aceptar',
+              closeOnOverlayTap: false,
+              // onPressButton:() => {borrarRegistros()}
+            })
             return;
           }
       } catch (error) {
@@ -112,7 +122,15 @@ const Boletos = ({navigation}) => {
            setSecondSelectData(data.fechas);
 
       } else {
-
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: 'Atencion',
+          textBody: data.fechas,
+          button: 'Aceptar',
+          closeOnOverlayTap: false,
+          // onPressButton:() => {borrarRegistros()}
+        })
+        return;
       }
 
     } catch (error) {
@@ -139,7 +157,7 @@ const Boletos = ({navigation}) => {
       // console.log(data.success);
       // console.log(data);
       if(data.success == true){
-        console.log(data.eventos);
+        console.log(data);
         boletosDatabase(data.eventos)
         // for (let boleto of data) {
         //   await insertBoleto(boleto.id_asiento, boleto.estatus);
@@ -150,6 +168,14 @@ const Boletos = ({navigation}) => {
         //  Alert.alert('success');
 
       } else if (data.success == false){
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: 'Error',
+          textBody: data.eventos,
+          button: 'Aceptar',
+          closeOnOverlayTap: false,
+          // onPressButton:() => {borrarRegistros()}
+        })
       }
     } catch (error) {
       console.error('Error al obtener datos:', error);
@@ -163,9 +189,18 @@ const Boletos = ({navigation}) => {
       for (const evento of eventos) {
         await insertBoleto(evento.id_asiento, evento.estatus);
       }
-      setResponsemensaje('Todos los boletos han sido guardados');
-      setResponsesuccess(false)
-      setAlertVisible(true);
+      // setResponsemensaje('Todos los boletos han sido guardados');
+      // setResponsesuccess(false)
+      // setAlertVisible(true);
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Exito',
+        textBody: 'Todos los boletos han sido guardados',
+        button: 'Aceptar',
+        closeOnOverlayTap: false,
+        onPressButton:() => {closeAlert()}
+      })
+      
       console.log('completo');
       // setLoading(false);
       // console.log('Todos los boletos han sido insertados');
@@ -177,6 +212,7 @@ const Boletos = ({navigation}) => {
   };
 
   return (
+    <AlertNotificationRoot>
     <View style={styles.container}>
       <Text style={styles.headerText}>Selecciona el Evento</Text>
       <Picker
@@ -220,7 +256,7 @@ const Boletos = ({navigation}) => {
       )}
     </View>
     </View>
-    
+    </AlertNotificationRoot>
   );
 };
 

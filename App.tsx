@@ -12,6 +12,7 @@ import Menu from './src/views/drawer/menu.jsx';
 import Perfil from './src/views/perfil/perfil.jsx';
 import TicketDownload from './src/views/scanner/boletos.jsx'
 import Qr from './src/views/scanner/Qr.jsx'
+import Escaneados from './src/views/Confirmados/confirmados.jsx'
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
         <Stack.Screen name='Perfil' component={Perfil} options={{ headerShown: false}}/>
         <Stack.Screen name='Ticket' component={TicketDownload} options={{ headerShown: false}}/>
         <Stack.Screen name='Escaner' component={Qr} options={{ headerShown: false}}/>
+        <Stack.Screen name='Escaneados' component={Escaneados} options={{ headerShown: false}}/>
         {/* <Stack.Screen name='Qr' component={Qr}/> */}
     </Stack.Navigator>
   </NavigationContainer>
