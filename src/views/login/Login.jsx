@@ -20,21 +20,36 @@ const LoginScreen = ({navigation}) => {
       const pass = await obtener('password');
       const user = await obtener('email');
       const savetoken = await obtener('token');
+    
       // console.log(pass);
-      if(user != '' && pass != ''){
-        // console.log('entra ');
-        // console.log(user);
-        // console.log(pass);
-        setUsuario(user);
-        sertContrasena(pass);
-        setToken(savetoken);
-
-      }else {
-        // console.log(' no entra ');
-
+      if(user == null && pass == null && savetoken == null){
+        // console.log('primera condicion');
         setUsuario('');
         sertContrasena('');
         setToken('');
+        setFlag(false);
+
+        // console.log(savetoken);
+        //  console.log(user);
+        //  console.log(pass);
+        // setUsuario(user);
+        // sertContrasena(pass);
+        // setToken(savetoken);
+        // setFlag(true);
+      }else{
+        // console.log(' tienen info');
+
+        setUsuario(user);
+        sertContrasena(pass);
+        setToken(savetoken);
+        setFlag(true);
+        // console.log(' no entra ');
+
+        // setUsuario('');
+        // sertContrasena('');
+        // setToken('');
+        // setFlag(false);
+
 
       }
     };
@@ -57,6 +72,7 @@ const LoginScreen = ({navigation}) => {
   const [responsesuccess, setResponsesuccess] = useState(true);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [flag, setFlag] = useState(false);
 
 
   const toggleSecureTextEntry = () => {
@@ -76,89 +92,80 @@ const LoginScreen = ({navigation}) => {
     { text: 'Aceptar', onPress: closeAlert },
   ];
   const valida = async () => {
-    // navigation.navigate('HomePuller');
-    // if (email == '' || password == '') {
-    //   // Alert.alert('Por favor llena todos los campos');
-    //   Toast.show({
-    //     type: ALERT_TYPE.DANGER,
-    //     title: 'Error',
-    //     textBody: 'Por favor llena todos los campos',
-    //   })
-    //   return;
-    // } else if (!validateEmail(email)){
-    //   // Alert.alert('Correo electrónico no valido');
-    //   Toast.show({
-    //     type: ALERT_TYPE.DANGER,
-    //     title: 'Error',
-    //     textBody: 'Correo electrónico no valido',
-    //   })
-    // }else if(!password){
-    //   Toast.show({
-    //     type: ALERT_TYPE.DANGER,
-    //     title: 'Error',
-    //     textBody: 'Contraseña no valida',
-    //   })
-    //   // Alert.alert('Contraseña no valida');
-    // }else
-    // if(accesstoken != '' && accesstoken == null ){
-    //   console.log(accesstoken);
-    //   console.log('entr000');
-    //   // navigation.replace('Home');
-    // }else{
-      const datos = {
-          usuario : email == '' ? usuario : email,
-          password :password == '' ? contrasena : password,
-      };
-
-    //   console.log(datos);
-    //   const datos = {
-    //     usuario : "escaner@fasticket.mx",
-    //     password :"Fa5tick3t.mx",
-    // };
-      // console.log(datos);
-
-            try {
-              setLoading(true);
-        const data = await ApiRequest( datos, endpoints.login,'POST');
-        // const token = data.token;
-        // console.log(token);
-        // navigation.replace('Home');
-                if(data.success == true){
-        // setResponseData(data);
-
-          const token = data.token;
-          // console.log(token);
-          // return;
-          const userData = data;
-          // login(token,userData);
-          guardar('token',token);
-          guardar('usuario',data.usuario.id_usuario.toString());
-          guardar('email',email == '' ? usuario : email);
-          guardar('password',password == '' ? contrasena : password);
-    
-
-          // const guardarToken = async (token) => await AsyncStorage.setItem('@token', token)
-
-            navigation.replace('Home');
-        } else if (data.success == false){
-          Dialog.show({
+    if(flag){
+      navigation.replace('Home');
+    }else{
+      if (email == '' || password == '') {
+          Toast.show({
             type: ALERT_TYPE.DANGER,
             title: 'Error',
-            textBody: data.mensaje,
-            button: 'Aceptar',
+            textBody: 'Por favor llena todos los campos',
           })
-          // setResponsemensaje(data.mensaje);
-          // setResponsesuccess(data.success)
-          // setAlertVisible(true);
-          setLoading(false);
-
+          return;
+        } else if (!validateEmail(email)){
+          // Alert.alert('Correo electrónico no valido');
+          Toast.show({
+            type: ALERT_TYPE.DANGER,
+            title: 'Error',
+            textBody: 'Correo electrónico no valido',
+          })
+        }else if(!password){
+          Toast.show({
+            type: ALERT_TYPE.DANGER,
+            title: 'Error',
+            textBody: 'Contraseña no valida',
+          })
+        }else {
+          const datos = {
+            usuario : email == '' ? usuario : email,
+            password :password == '' ? contrasena : password,
+        };
+  
+      //   console.log(datos);
+      //   const datos = {
+      //     usuario : "escaner@fasticket.mx",
+      //     password :"Fa5tick3t.mx",
+      // };
+        // console.log(datos);
+          try {
+            setLoading(true);
+            const data = await ApiRequest( datos, endpoints.login,'POST');
+          // const token = data.token;
+          // console.log(token);
+          // navigation.replace('Home');
+            if(data.success == true){
+              const token = data.token;
+              // console.log(token);
+              // return;
+              const userData = data;
+              // login(token,userData);
+              guardar('token',token);
+              guardar('usuario',data.usuario.id_usuario.toString());
+              guardar('email',email == '' ? usuario : email);
+              guardar('password',password == '' ? contrasena : password);
+        
+    
+              // const guardarToken = async (token) => await AsyncStorage.setItem('@token', token)
+    
+                navigation.replace('Home');
+            } else if (data.success == false){
+              Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: 'Error',
+                textBody: data.mensaje,
+                button: 'Aceptar',
+              })
+              // setResponsemensaje(data.mensaje);
+              // setResponsesuccess(data.success)
+              // setAlertVisible(true);
+              setLoading(false);
+    
+            }
+          } catch (error) {
+    
+            console.error('Error al obtener datos:', error);
         }
-      } catch (error) {
-
-        console.error('Error al obtener datos:', error);
-      // }
-      // Alert.alert('respuesta de login');
-
+      }
     }
   };
   const validateEmail = (email) => {

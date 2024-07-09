@@ -39,13 +39,17 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     overlay: {
-        position: 'absolute',
-        top: '50%',
-        left: 0,
-        right: 0,
-        alignItems: 'center',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
       },
       scanText: {
+        marginTop:100,
+        margin: 90,
         fontSize: 18,
         color: '#fff',
       },
@@ -91,6 +95,12 @@ const styles = StyleSheet.create({
   noConnectionText: {
     color: 'red',
     fontSize: 20,
+  },
+  box: {
+    height: '40%', // Alto del cuadro (proporcional al tamaño del contenedor)
+    width: '80%',  // Ancho del cuadro (proporcional al tamaño del contenedor)
+    borderWidth: 2,
+    borderColor: 'red',
   },
 });
 

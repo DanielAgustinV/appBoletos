@@ -154,7 +154,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   centeredText: {
-    fontSize: 18,
+    marginTop: 300,
+    fontSize: 25,
     textAlign: 'center',
+    color: 'black'
   },
 });

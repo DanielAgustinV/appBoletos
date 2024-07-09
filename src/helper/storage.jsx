@@ -27,3 +27,13 @@ export const obtener = async (name) => {
     throw error;
   }
 };
+
+export const eliminar = async (name) => {
+  try {
+    await AsyncStorage.removeItem(name);
+    console.log('Se eliminó correctamente ' + name + ' del almacenamiento local.');
+  } catch (error) {
+    console.error('Error al eliminar el token:', error);
+    throw error;
+  }
+};

@@ -75,6 +75,7 @@ function QRscanner({navigation}) {
           const token = await obtener('token');
           if (!token) {
             Alert.alert('Error', 'No se pudo obtener el token');
+            scannerRef.current.reactivate();
             return;
           }
           // console.log(token);
@@ -253,7 +254,7 @@ function QRscanner({navigation}) {
           textBody: '¿Quieres consultar los boletos confirmados?',
           button: 'Si',
           // closeOnOverlayTap: true,
-          onPressButton:() => { navigation.navigate('Escaneados')}
+          onPressButton:() => { navigation.replace('Escaneados')}
         })
         // try {
         //   const data = await getBoletos();
@@ -404,6 +405,12 @@ function QRscanner({navigation}) {
                 onRead={(e) => handleScan(e, flag == undefined ? 1 : flag)}
                 flashMode={light ? RNCamera.Constants.FlashMode.torch : RNCamera.Constants.FlashMode.auto}
                 topContent={<></>}
+                rectOfInterest={{
+                  x: 0.2, // Coordenadas de la esquina superior izquierda de la región de interés
+                  y: 0.4,
+                  width: 0.6, // Ancho y alto de la región de interés (proporcional al tamaño de la cámara)
+                  height: 0.2,
+                }}
                 bottomContent={
                     <View style={styles.buttonContainer}>
                     <Button
@@ -442,7 +449,9 @@ function QRscanner({navigation}) {
                 }
             />
             <View style={styles.overlay}>
+               <View style={styles.box}>
                 <Text style={styles.scanText}>Escanee el código QR</Text>
+               </View>
             </View>
             <View>
               {!responsesuccess && (

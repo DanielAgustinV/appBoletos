@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import {guardar} from '../../helper/storage';
+import {guardar,eliminar} from '../../helper/storage';
 import CustomAlert from '../ui/alerts';
 
 
@@ -21,9 +21,12 @@ const handleCloseAlert = () => {
 const CerrarSesion = () => {
   // logout('Login');
   // obtener('token')
-  guardar('token','')
-  guardar('email','')
-  guardar('password','')
+  // guardar('token','')
+  // guardar('email','')
+  // guardar('password','')
+  eliminar('token');
+  eliminar('email');
+  eliminar('password');
   navigation.replace('Login');
   setAlertVisible(false);
 
