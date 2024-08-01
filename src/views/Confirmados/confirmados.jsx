@@ -128,7 +128,7 @@ export default function DetailScreen({ navigation }) {
           <View style={styles.container}>
             <Card>
             <Card.Content>
-                <Title>Natanael Cano</Title>
+                <Title>Confirmados</Title>
                 {boletos.map((boleto, index) => (
                   // <Text style={styles.headerText} key={index}>ID: {boleto.id}, Asiento: {boleto.id_asiento}, Estatus: {boleto.id_estatus} </Text>
                 <Paragraph key={index}>Asiento: {boleto.id_asiento}, Estatus: {boleto.id_estatus == 4 ? 'CONFIRMADO' : 'PENDIENTE'}</Paragraph>

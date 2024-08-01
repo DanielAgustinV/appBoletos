@@ -6,7 +6,7 @@ const WelcomeScreen = () => {
   return (
     <View style={styles.container}>
       <Image 
-        source={require('../../assets/logo.png')} 
+        source={require('../../assets/logofinal.jpeg')} 
         style={styles.image} 
       />
       <Text style={styles.text}>Bienvenido</Text>

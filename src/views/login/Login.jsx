@@ -180,7 +180,7 @@ return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <Image source={require('../../assets/logo.png')} style={styles.logo} />
+          <Image source={require('../../assets/logofinal.jpeg')} style={styles.logo} />
         </View>
         {/* <Text style={styles.title}>Iniciar Sesión d</Text> */}
         <View style={styles.form}>
